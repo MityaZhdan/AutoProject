@@ -1,0 +1,68 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.Test;
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
+
+public class GithubChecking {
+
+
+
+
+
+    @Test
+    public void checkGithubProject() throws InterruptedException {
+
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Jack\\IdeaProjects\\ChromeDriver\\chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+        openPage(driver, "https://github.com/login?return_to=%2Fjoin%3Fsource%3Dheader");
+        inputData("#login_field", "MityaZhdan", driver);
+        inputData("#password", "AutoGitHub123", driver);
+        clickAndWait("#login > form > div.auth-form-body.mt-3 > input.btn.btn-primary.btn-block", driver);
+        //вход на страницу с кнопкой "Создать проект"
+        clickAndWait("#js-pjax-container > div > div > div > a.btn.shelf-cta.ml-3", driver);
+        //Вход на странцу создания репозитория
+        inputData("#repository_name", "Test0", driver);
+        clickAndWait("#repository_auto_init", driver);
+        Thread.sleep(5000);
+        clickAndWait("#new_repository > div.with-permission-fields > button", driver);
+        //создание нового файла
+        clickAndWait("#js-repo-pjax-container > div.container.new-discussion-timeline.experiment-repo-nav > div.repository-content > div.file-navigation.in-mid-page > div.BtnGroup.float-right > form > button", driver);
+        inputData("#js-repo-pjax-container > div.container.new-discussion-timeline.experiment-repo-nav > div.repository-content > div > form.js-blob-form > div.breadcrumb > span.js-breadcrumb-container > input", "file1", driver);
+        clickAndWait("#submit-file", driver);
+        //проверка на существование файла
+        System.out.println(isElementExist(driver, "#\\38 26e8142e6baabe8af779f5f490cf5f5-8b137891791fe96927ad78e64b0aad7bded08bdc"));
+
+
+    }
+
+    private boolean isElementExist(WebDriver driver, String name) {
+        try {
+            driver.findElement(By.cssSelector(name));
+            return true;
+        }catch (NoSuchElementException e){
+            return false;
+        }
+    }
+
+
+    private void openPage(WebDriver driver, String url) {
+        driver.get(url);
+    }
+
+
+
+    private void clickAndWait(String locator, WebDriver driver) {
+        WebElement searchTheButton = driver.findElement(By.cssSelector(locator));
+        searchTheButton.click();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    private void inputData(String locator, String data, WebDriver driver) {
+        WebElement inputData = driver.findElement(By.cssSelector(locator));
+        inputData.clear();
+        inputData.sendKeys(data);
+    }
+}
